@@ -1,0 +1,24 @@
+# MATLAB Autosave and Backup files
+*.asv
+*.autosave
+*~
+*.bak
+
+# Compiled MEX binaries (These should be recompiled on each machine)
+*.mex*
+*.mexa64
+*.mexw64
+*.mexw32
+*.mexmaci64
+*.mexmaca64
+
+# Simulink and Stateflow cache/code generation folders
+slprj/
+sfprj/
+
+# Figure/App Designer backups
+*.fig~
+*.mlapp~
+
+# Crash reports and logs
+matlab_crash_dump.*
