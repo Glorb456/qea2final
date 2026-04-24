@@ -1,6 +1,7 @@
 % '1' represents the first connected game controller
 joy = vrjoystick(1);
 
+
 disp('Press the B button to exit...');
 
 while true
@@ -12,14 +13,25 @@ while true
     % buttons(1) -> A, buttons(2) -> B, buttons(3) -> X, buttons(4) -> Y
     
     % Example: Print the Left Stick X-axis
-    fprintf('Left Stick X: %.2f\n', axes(1));
-    
-    % Exit loop if 'B' (usually button 2) is pressed
+    % fprintf('Left Stick X: %.2f\n', axes(1));
+    if axes(1) > .5
+        disp("Right")
+    end 
+    if axes(2) > .5
+        disp("Back")
+    end
+    if axes(1) < -.5
+        disp("Left")
+    end 
+    if axes(2) < -.5
+        disp("Forward")
+    end 
+    if buttons(1) == 1
+        disp("ACTION!")
+    end
     if buttons(2) == 1
         disp('Exiting...');
         break;
     end
-    
-    % Small pause to prevent MATLAB from freezing
     pause(0.05); 
 end
