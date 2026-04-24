@@ -1,4 +1,8 @@
 
+function path = create_path_function()
+
+    %with controller connected, move with left joystick, press A to speed
+    %up, B to slow down, Y to exit/complete
 
     % axes(1) and axes(2) -> Left stick X and Y (-1.0 to 1.0)
     % axes(4) and axes(5) -> Right stick X and Y (-1.0 to 1.0)
@@ -13,6 +17,8 @@
     hold on;
     hLine = animatedline('Color', 'b', 'LineWidth', 2);
     hMarker = plot(0, 0, 'r*'); 
+    plot(10, 10, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'k');
+
     hold off;
     
     curr_x = 0;
@@ -25,12 +31,12 @@
     while true
         % Read the current state of the controller
         [axes, buttons, povs] = read(joy);
-        speed = .2;
+        speed = .1;
         if buttons(1) == 1
-            speed = .5;
+            speed = .2;
         end 
         if buttons(2) == 1
-            speed = .1;
+            speed = .05;
         end 
     
     
@@ -55,9 +61,14 @@
         end 
         speed = .1;
     
-        pause(0.05); 
+        pause(0.01); 
+        if buttons(3) == 1
+            create_path_function()
+            return
+        end 
     end
     plot(path(1, :), path(2,:), 'Color','g', 'LineWidth', 2)
     axis equal;
     axis([-11 11 -11 11]);
+end 
 
