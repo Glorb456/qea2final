@@ -1,5 +1,5 @@
 
-function path = create_path_function()
+function path = create_path_function(X,Y,Z)
 
     %with controller connected, move with left joystick, press A to speed
     %up, B to slow down, Y to exit/complete
@@ -11,15 +11,18 @@ function path = create_path_function()
 
     joy = sim3d.io.Joystick(ID=1);
     
-    figure;
+    figure('Name', 'Rover Mission: Driving Phase');
+    % MODIFICATION: Draw the terrain
+    contour(X, Y, Z, 15); 
+    hold on;
     axis equal;
     axis([-11 11 -11 11]);
-    hold on;
     hLine = animatedline('Color', 'b', 'LineWidth', 2);
-    hMarker = plot(0, 0, 'r*'); 
+    hMarker = plot(0, 0, 'r*');
+    % Goal location
     plot(10, 10, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'k');
 
-    hold off;
+   
     
     curr_x = 0;
     curr_y = 0; 
@@ -30,7 +33,7 @@ function path = create_path_function()
     
     while true
         % Read the current state of the controller
-        [axes, buttons, povs] = read(joy);
+        [axes, buttons, ~] = read(joy);
         speed = .1;
         if buttons(1) == 1
             speed = .2;
@@ -63,12 +66,10 @@ function path = create_path_function()
     
         pause(0.01); 
         if buttons(3) == 1
-            create_path_function()
+            path = create_path_function(X, Y, Z);
             return
         end 
     end
     plot(path(1, :), path(2,:), 'Color','g', 'LineWidth', 2)
-    axis equal;
-    axis([-11 11 -11 11]);
 end 
 
