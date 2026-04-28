@@ -29,6 +29,8 @@ uicontrol('Style', 'pushbutton', 'Units', 'normalized', 'Position', [0.8, 0.05, 
     'String', 'Save & Start', 'Callback', 'uiresume(gcbf)');
 
 while ishandle(fig)
+    final_c = sld_comp.Value;
+    final_a = sld_amp.Value;
     % Call terrain function in real-time
     [x, y, z, px, py] = generate_rover_terrain(seed, sld_comp.Value, sld_amp.Value);
     
@@ -39,12 +41,10 @@ while ishandle(fig)
     zlim([-35 35]);
     drawnow;
     
-    uiwait(fig, 0.1); 
-    if ~ishandle(fig), break; end
+    uiwait(fig, 0.5); 
 end
 
 % Save Data
-final_c = sld_comp.Value; final_a = sld_amp.Value;
 saveAndQuit(filename, seed, final_c, final_a);
 
 % Mission Phase
