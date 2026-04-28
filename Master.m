@@ -66,3 +66,4 @@ function saveAndQuit(fname, s, c, a)
     saved_amplitudes = [saved_amplitudes; a];
     save(fname, 'saved_seeds', 'saved_complexities', 'saved_amplitudes');
 end
+%% 
