@@ -41,7 +41,7 @@ while ishandle(fig)
     zlim([-35 35]);
     drawnow;
     
-    uiwait(fig, 0.5); 
+    % uiwait(fig, 0.1); 
 end
 
 % Save Data

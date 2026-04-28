@@ -12,15 +12,19 @@ function path = create_path_function(X,Y,Z)
     joy = sim3d.io.Joystick(ID=1);
     
     figure('Name', 'Rover Mission: Driving Phase');
-    % MODIFICATION: Draw the terrain
-    contour(X, Y, Z, 15); 
+    surf(X, Y, Z, 'EdgeColor', 'none', 'FaceAlpha', 0.8); 
+    colormap summer; lighting gouraud; camlight;
     hold on;
+    grid on;
+    view(3); 
     axis equal;
-    axis([-11 11 -11 11]);
-    hLine = animatedline('Color', 'b', 'LineWidth', 2);
-    hMarker = plot(0, 0, 'r*');
-    % Goal location
-    plot(10, 10, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'k');
+    zlim([-35 35]);
+    start_z = interp2(X, Y, Z, 0, 0);
+    hLine = animatedline('Color', 'b', 'LineWidth', 3);
+    hMarker = plot3(0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2); 
+    
+    goal_z = interp2(X, Y, Z, 10, 10);
+    plot3(10, 10, goal_z, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red');
 
    
     
@@ -47,12 +51,14 @@ function path = create_path_function(X,Y,Z)
             the_angle = atan2d(-axes(2), -axes(1)) - 90;
             curr_y = curr_y +  speed*cosd(the_angle);
             curr_x = curr_x + speed*sind(the_angle);
+            curr_z = interp2(X, Y, Z, curr_x, curr_y);
             path(:, end+1) = [curr_x; curr_y];
     
             disp(the_angle)
-            addpoints(hLine, curr_x, curr_y)
+            addpoints(hLine, curr_x, curr_y, curr_z)
             hMarker.XData = curr_x;
             hMarker.YData = curr_y;
+            hMarker.ZData = curr_z;
             drawnow limitrate; 
             disp(the_angle)
         else 
