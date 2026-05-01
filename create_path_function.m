@@ -90,7 +90,7 @@ function path = create_path_function(X,Y,Z)
             hMarker.ZData = curr_z;
 
             
-            path(:, end+1, :) = [curr_x; curr_y; curr_z ];
+            path(:, end+1, :) = [curr_x; curr_y; curr_z ]; %#ok<AGROW>
 
         else 
             disp(0)
@@ -111,8 +111,6 @@ function path = create_path_function(X,Y,Z)
         if sqrt((curr_x-10).^2 + (curr_y-10).^2) < .5
             break;
         end 
-        speed = .1;
-    
         pause(0.01); 
         if buttons(3) == 1
             path = create_path_function(X, Y, Z);
