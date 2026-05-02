@@ -21,9 +21,9 @@ fig = figure('Color', 'w', 'Name', 'Terrain Designer', 'Position', [100, 100, 10
 ax = axes('Parent', fig, 'Position', [0.13, 0.3, 0.77, 0.6]);
 
 sld_comp = uicontrol('Parent', fig, 'Style', 'slider', 'Units', 'normalized', ...
-    'Position', [0.3, 0.15, 0.4, 0.05], 'Value', complexity, 'Min', 0.1, 'Max', 2.0);
+    'Position', [0.3, 0.15, 0.4, 0.05], 'Value', complexity, 'Min', 0.1, 'Max', 1.0);
 sld_amp = uicontrol('Parent', fig, 'Style', 'slider', 'Units', 'normalized', ...
-    'Position', [0.3, 0.05, 0.4, 0.05], 'Value', amplitude, 'Min', 1, 'Max', 30);
+    'Position', [0.3, 0.05, 0.4, 0.05], 'Value', amplitude, 'Min', 1, 'Max', 15);
 
 uicontrol('Style', 'pushbutton', 'Units', 'normalized', 'Position', [0.8, 0.05, 0.15, 0.1], ...
     'String', 'Save & Start', 'Callback', 'set(gcbf, ''UserData'', true); uiresume(gcbf)');
