@@ -68,7 +68,7 @@ fprintf('Finding best route...\n');
 [best_path, best_fuel] = find_best_route(x, y, z, px, py, start_point, goal_point);
 
 % Get the path from the joystick controller
-player_path = create_path_function(x, y, z, best_path);
+player_path = create_path_function(x, y, z);
 
 % Calculate final fuel using the independent physics function
 final_fuel = calculate_rover_fuel(player_path, x, y, px, py);

@@ -1,5 +1,5 @@
 
-function path = create_path_function(X,Y,Z,best_path)
+function path = create_path_function(X,Y,Z)
 
     %with controller connected, move with left joystick, press A to speed
     %up, B to slow down, Y to exit/complete
@@ -9,9 +9,9 @@ function path = create_path_function(X,Y,Z,best_path)
     % buttons(1) -> A, buttons(2) -> B, buttons(3) -> X, buttons(4) -> Y
     
 
-    if nargin < 4
-        best_path = [];
-    end
+    % if nargin < 4
+    %     best_path = [];
+    % end
 
     joy = sim3d.io.Joystick(ID=1);
 
@@ -26,17 +26,17 @@ function path = create_path_function(X,Y,Z,best_path)
     camva(ax3d, 75);
     axis(ax3d, 'equal');
     start_z = interp2(X, Y, Z, 0, 0);
-    hLine = animatedline(ax3d, 'Color', 'b', 'LineWidth', 3);
-    hMarker = plot3(ax3d, 0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2);
+    %hLine = animatedline(ax3d, 'Color', 'b', 'LineWidth', 3);
+    %hMarker = plot3(ax3d, 0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2);
 
     goal_z = interp2(X, Y, Z, 10, 10);
     plot3(ax3d, 10, 10, goal_z, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red');
-    if ~isempty(best_path)
-        plot3(ax3d, best_path(1, :), best_path(2, :), best_path(3, :) + 0.45, ...
-            'm--', 'LineWidth', 2);
-    end
+    % if ~isempty(best_path)
+    %     plot3(ax3d, best_path(1, :), best_path(2, :), best_path(3, :) + 0.45, ...
+    %         'm--', 'LineWidth', 2);
+    % end
 
-    map_ax = axes('Parent', mission_fig, 'Position', [0.055 0.065 0.26 0.26], ...
+    map_ax = axes('Parent', mission_fig, 'Position', [0 0.065 0.3 0.3], ...
         'Color', [0.96 0.98 0.94], 'Box', 'on');
     contour(map_ax, X, Y, Z, 12, 'LineColor', [0.70 0.78 0.62]);
     hold(map_ax, 'on');
@@ -44,9 +44,9 @@ function path = create_path_function(X,Y,Z,best_path)
     axis(map_ax, [-10 10 -10 10]);
     set(map_ax, 'XTick', [], 'YTick', [], 'Layer', 'top');
     title(map_ax, '2D Route Map', 'FontSize', 9);
-    if ~isempty(best_path)
-        plot(map_ax, best_path(1, :), best_path(2, :), 'm--', 'LineWidth', 2);
-    end
+    % if ~isempty(best_path)
+    %     plot(map_ax, best_path(1, :), best_path(2, :), 'm--', 'LineWidth', 2);
+    % end
     map_player_line = plot(map_ax, 0, 0, 'b-', 'LineWidth', 2);
     map_marker = plot(map_ax, 0, 0, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
     plot(map_ax, 0, 0, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
@@ -56,7 +56,7 @@ function path = create_path_function(X,Y,Z,best_path)
     
     curr_x = 0;
     curr_y = 0; 
-    addpoints(hLine, curr_x, curr_y, start_z)
+    %addpoints(hLine, curr_x, curr_y, start_z)
     
     
     path = [0;0;start_z];
@@ -109,10 +109,10 @@ function path = create_path_function(X,Y,Z,best_path)
 
 
     
-            addpoints(hLine, curr_x, curr_y, curr_z)
-            hMarker.XData = curr_x;
-            hMarker.YData = curr_y;
-            hMarker.ZData = curr_z;
+            %addpoints(hLine, curr_x, curr_y, curr_z)
+            %hMarker.XData = curr_x;
+            %hMarker.YData = curr_y;
+            %hMarker.ZData = curr_z;
 
             
             path(:, end+1) = [curr_x; curr_y; curr_z ]; %#ok<AGROW>
@@ -140,7 +140,7 @@ function path = create_path_function(X,Y,Z,best_path)
         end 
         pause(0.01); 
         if buttons(3) == 1
-            path = create_path_function(X, Y, Z, best_path);
+            path = create_path_function(X, Y, Z);
             return
         end 
     end
