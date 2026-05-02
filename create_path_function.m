@@ -38,7 +38,9 @@ function path = create_path_function(X,Y,Z)
 
     map_ax = axes('Parent', mission_fig, 'Position', [0 0.065 0.3 0.3], ...
         'Color', [0.96 0.98 0.94], 'Box', 'on');
-    contour(map_ax, X, Y, Z, 12, 'LineColor', [0.70 0.78 0.62]);
+    contourf(map_ax, X, Y, Z, 12, 'LineColor', [0.70 0.78 0.62]);
+    c = colorbar('southoutside');
+    c.Label.String = 'Elevation';
     hold(map_ax, 'on');
     axis(map_ax, 'equal');
     axis(map_ax, [-10 10 -10 10]);
