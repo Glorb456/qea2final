@@ -60,16 +60,18 @@ saveAndQuit(filename, seed, final_c, final_a);
 
 % Mission Phase
 fprintf('Starting Mission...\n');
+start_point = [0; 0];
+goal_point = [10; 10];
+
+% Find a low-fuel route before driving so the mission can show it on the 2D map
+fprintf('Finding best route...\n');
+[best_path, best_fuel] = find_best_route(x, y, z, px, py, start_point, goal_point);
+
 % Get the path from the joystick controller
-player_path = create_path_function(x, y, z);
+player_path = create_path_function(x, y, z, best_path);
 
 % Calculate final fuel using the independent physics function
 final_fuel = calculate_rover_fuel(player_path, x, y, px, py);
-
-% Find a low-fuel route using the same terrain and fuel model
-start_point = [0; 0];
-goal_point = [10; 10];
-[best_path, best_fuel] = find_best_route(x, y, z, px, py, start_point, goal_point);
 
 fprintf('\nMission Complete!\nTotal Fuel Used: %.2f Joules\n', final_fuel);
 fprintf('Best Route Fuel Used: %.2f Joules\n', best_fuel);
