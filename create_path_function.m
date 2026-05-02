@@ -32,6 +32,10 @@ function path = create_path_function(X,Y,Z)
     camva(ax3d, 75);
     axis(ax3d, 'equal');
     start_z = interp2(X, Y, Z, start_x, start_y);
+    curr_x = start_x;
+    curr_y = start_y;
+    curr_z = start_z;
+    yaw = 90;
     %hLine = animatedline(ax3d, 'Color', 'b', 'LineWidth', 3);
     %hMarker = plot3(ax3d, 0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2);
 
@@ -59,21 +63,18 @@ function path = create_path_function(X,Y,Z)
     map_marker = plot(map_ax, start_x, start_y, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
     plot(map_ax, start_x, start_y, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
     plot(map_ax, goal_x, goal_y, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
+    heading_len = 1.35;
+    heading_arrow = quiver(map_ax, curr_x, curr_y, heading_len*cosd(yaw), heading_len*sind(yaw), ...
+        0, 'Color', [0.05 0.05 0.05], 'LineWidth', 2, 'MaxHeadSize', 1.4);
 
-   
-    
-    curr_x = start_x;
-    curr_y = start_y;
     %addpoints(hLine, curr_x, curr_y, start_z)
     
     
     path = [start_x; start_y; start_z];
     pitch = 0; 
-    yaw = 90;
     eye_height = .8; 
     look_speed = 2; 
     look_dist = 5; 
-    curr_z = start_z; 
     
     while true
         % Read the current state of the controller
@@ -130,6 +131,8 @@ function path = create_path_function(X,Y,Z)
         else 
             disp(0)
         end 
+        set(heading_arrow, 'XData', curr_x, 'YData', curr_y, ...
+            'UData', heading_len*cosd(yaw), 'VData', heading_len*sind(yaw));
         campos(ax3d, [curr_x, curr_y, curr_z + eye_height]);
         target_x = curr_x + look_dist*cosd(pitch)*cosd(yaw);
         target_y = curr_y + look_dist*cosd(pitch)*sind(yaw);
