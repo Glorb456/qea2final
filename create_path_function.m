@@ -25,7 +25,7 @@ function path = create_path_function(X,Y,Z)
     camup(ax3d, [0 0 1]);
     camva(ax3d, 75);
     axis(ax3d, 'equal');
-    start_z = interp2(X, Y, Z, 0, 0);
+    start_z = interp2(X, Y, Z, -10, -10);
     %hLine = animatedline(ax3d, 'Color', 'b', 'LineWidth', 3);
     %hMarker = plot3(ax3d, 0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2);
 
@@ -49,9 +49,9 @@ function path = create_path_function(X,Y,Z)
     % if ~isempty(best_path)
     %     plot(map_ax, best_path(1, :), best_path(2, :), 'm--', 'LineWidth', 2);
     % end
-    map_player_line = plot(map_ax, 0, 0, 'b-', 'LineWidth', 2);
-    map_marker = plot(map_ax, 0, 0, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-    plot(map_ax, 0, 0, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
+    map_player_line = plot(map_ax, -10, -10, 'b-', 'LineWidth', 2);
+    map_marker = plot(map_ax, -10, -10, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+    plot(map_ax, -10, -10, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
     plot(map_ax, 10, 10, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
 
    
