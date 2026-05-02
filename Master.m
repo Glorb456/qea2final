@@ -59,13 +59,8 @@ close(fig);
 saveAndQuit(filename, seed, final_c, final_a);
 
 % Mission Phase
-fprintf('Starting Mission...\n');
 start_point = [0; 0];
 goal_point = [10; 10];
-
-% Find a low-fuel route before driving so the mission can show it on the 2D map
-fprintf('Finding best route...\n');
-[best_path, best_fuel] = find_best_route(x, y, z, px, py, start_point, goal_point);
 
 % Get the path from the joystick controller
 player_path = create_path_function(x, y, z);
@@ -73,11 +68,14 @@ player_path = create_path_function(x, y, z);
 % Calculate final fuel using the independent physics function
 final_fuel = calculate_rover_fuel(player_path, x, y, px, py);
 
-fprintf('\nMission Complete!\nTotal Fuel Used: %.2f Joules\n', final_fuel);
-fprintf('Best Route Fuel Used: %.2f Joules\n', best_fuel);
-fprintf('Your route used %.1f%% of the best route fuel.\n', 100 * final_fuel / max(best_fuel, eps));
+% Find the best route only after the player finishes
+status_fig = showStatusMessage('Finding best route...');
+[best_path, best_fuel] = find_best_route(x, y, z, px, py, start_point, goal_point);
+if ishandle(status_fig)
+    close(status_fig);
+end
 
-showRouteComparison(x, y, z, player_path, best_path);
+showRouteComparison(x, y, z, player_path, best_path, final_fuel, best_fuel);
 
 % Shared Functions
 function saveAndQuit(fname, s, c, a)
@@ -103,29 +101,65 @@ function value = getSavedField(saved_data, field_name)
     end
 end
 
-function showRouteComparison(X, Y, Z, player_path, best_path)
+function fig = showStatusMessage(message)
+    fig = figure('Color', 'w', 'Name', 'Mission Status', ...
+        'MenuBar', 'none', 'ToolBar', 'none', 'NumberTitle', 'off', ...
+        'Position', [520 420 360 140]);
+    axes('Parent', fig, 'Visible', 'off', 'Position', [0 0 1 1]);
+    text(0.5, 0.55, message, 'Units', 'normalized', ...
+        'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
+        'FontSize', 14, 'FontWeight', 'bold');
+    drawnow;
+end
+
+function showRouteComparison(X, Y, Z, player_path, best_path, player_fuel, best_fuel)
     figure('Color', 'w', 'Name', 'Player Route vs Best Route');
-    hTerrain = surf(X, Y, Z, 'EdgeColor', 'none', 'FaceAlpha', 0.85);
-    colormap summer; colorbar; lighting gouraud; camlight;
-    hold on; grid on; axis equal; view(3);
-    xlabel('x position'); ylabel('y position'); zlabel('height');
-    title('Player Route vs Computed Best Route');
+    ax3d = axes('Position', [0.07 0.12 0.58 0.75]);
+    hTerrain = surf(ax3d, X, Y, Z, 'EdgeColor', 'none', 'FaceAlpha', 0.85);
+    colormap(ax3d, summer); colorbar(ax3d); lighting(ax3d, 'gouraud'); camlight(ax3d);
+    hold(ax3d, 'on'); grid(ax3d, 'on'); axis(ax3d, 'equal'); view(ax3d, 3);
+    xlabel(ax3d, 'x position'); ylabel(ax3d, 'y position'); zlabel(ax3d, 'height');
+    title(ax3d, 'Mission Complete: Player Route vs Computed Best Route');
 
     player3d = pathTo3D(player_path, X, Y, Z);
     best3d = pathTo3D(best_path, X, Y, Z);
 
-    hPlayer = plot3(player3d(1, :), player3d(2, :), player3d(3, :) + 0.35, ...
+    hPlayer = plot3(ax3d, player3d(1, :), player3d(2, :), player3d(3, :) + 0.35, ...
         'b-', 'LineWidth', 2.5);
-    hBest = plot3(best3d(1, :), best3d(2, :), best3d(3, :) + 0.65, ...
+    hBest = plot3(ax3d, best3d(1, :), best3d(2, :), best3d(3, :) + 0.65, ...
         'm--', 'LineWidth', 2.5);
-    hStart = plot3(0, 0, interp2(X, Y, Z, 0, 0) + 1.0, ...
+    hStart = plot3(ax3d, 0, 0, interp2(X, Y, Z, 0, 0) + 1.0, ...
         'go', 'MarkerFaceColor', 'g', 'MarkerSize', 9);
-    hGoal = plot3(10, 10, interp2(X, Y, Z, 10, 10) + 1.0, ...
+    hGoal = plot3(ax3d, 10, 10, interp2(X, Y, Z, 10, 10) + 1.0, ...
         'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 14);
 
-    legend([hTerrain, hPlayer, hBest, hStart, hGoal], ...
+    legend(ax3d, [hTerrain, hPlayer, hBest, hStart, hGoal], ...
         {'Terrain', 'Player route', 'Best route', 'Start', 'Goal'}, ...
         'Location', 'northoutside');
+
+    ax2d = axes('Position', [0.70 0.52 0.24 0.28]);
+    contourf(ax2d, X, Y, Z, 16, 'LineColor', 'none');
+    colormap(ax2d, summer);
+    hold(ax2d, 'on'); axis(ax2d, 'equal'); axis(ax2d, [-10 10 -10 10]);
+    title(ax2d, '2D best-route map');
+    xlabel(ax2d, 'x'); ylabel(ax2d, 'y');
+    plot(ax2d, player3d(1, :), player3d(2, :), 'b-', 'LineWidth', 2);
+    plot(ax2d, best3d(1, :), best3d(2, :), 'm--', 'LineWidth', 2.4);
+    plot(ax2d, 0, 0, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
+    plot(ax2d, 10, 10, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
+
+    axText = axes('Position', [0.70 0.17 0.24 0.25], 'Visible', 'off');
+    ratio = player_fuel / max(best_fuel, eps);
+    result_text = {
+        'Mission Complete'
+        ''
+        sprintf('Player fuel: %.2f J', player_fuel)
+        sprintf('Best-route fuel: %.2f J', best_fuel)
+        sprintf('Player / best: %.1f%%', 100 * ratio)
+        sprintf('Extra fuel: %.1f%%', 100 * (ratio - 1))
+    };
+    text(axText, 0, 1, result_text, 'Units', 'normalized', ...
+        'VerticalAlignment', 'top', 'FontSize', 11, 'FontWeight', 'bold');
 end
 
 function path3d = pathTo3D(path, X, Y, Z)
