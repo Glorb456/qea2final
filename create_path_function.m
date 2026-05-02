@@ -22,7 +22,7 @@ function path = create_path_function(X,Y,Z)
     y_limits = [min(Y(:)), max(Y(:))];
 
     mission_fig = figure('Name', 'Rover Mission: Driving Phase');
-    ax3d = axes('Parent', mission_fig, 'Position', [0.05 0.06 0.9 0.9]);
+    ax3d = axes('Parent', mission_fig, 'Position', [0 0 1 1]);
     surf(ax3d, X, Y, Z, 'EdgeColor', 'none', 'FaceAlpha', 0.8);
     colormap(mission_fig, summer); lighting(ax3d, 'gouraud'); camlight(ax3d);
     hold(ax3d, 'on');
@@ -79,9 +79,9 @@ function path = create_path_function(X,Y,Z)
     while true
         % Read the current state of the controller
         [stick_axes, buttons, ~] = read(joy);
-        speed = .1;
+        speed = .075;
         if buttons(1) == 1
-            speed = .2;
+            speed = .15;
         end 
         if buttons(2) == 1
             speed = .05;
