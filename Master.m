@@ -59,7 +59,7 @@ close(fig);
 saveAndQuit(filename, seed, final_c, final_a);
 
 % Mission Phase
-start_point = [0; 0];
+start_point = [-10; -10];
 goal_point = [10; 10];
 
 % Get the path from the joystick controller
@@ -128,9 +128,14 @@ function showRouteComparison(X, Y, Z, player_path, best_path, player_fuel, best_
         'b-', 'LineWidth', 2.5);
     hBest = plot3(ax3d, best3d(1, :), best3d(2, :), best3d(3, :) + 0.65, ...
         'm--', 'LineWidth', 2.5);
-    hStart = plot3(ax3d, 0, 0, interp2(X, Y, Z, 0, 0) + 1.0, ...
+    start_xy = player3d(1:2, 1);
+    goal_xy = best3d(1:2, end);
+    x_limits = [min(X(:)), max(X(:))];
+    y_limits = [min(Y(:)), max(Y(:))];
+
+    hStart = plot3(ax3d, start_xy(1), start_xy(2), interp2(X, Y, Z, start_xy(1), start_xy(2)) + 1.0, ...
         'go', 'MarkerFaceColor', 'g', 'MarkerSize', 9);
-    hGoal = plot3(ax3d, 10, 10, interp2(X, Y, Z, 10, 10) + 1.0, ...
+    hGoal = plot3(ax3d, goal_xy(1), goal_xy(2), interp2(X, Y, Z, goal_xy(1), goal_xy(2)) + 1.0, ...
         'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 14);
 
     legend(ax3d, [hTerrain, hPlayer, hBest, hStart, hGoal], ...
@@ -140,13 +145,13 @@ function showRouteComparison(X, Y, Z, player_path, best_path, player_fuel, best_
     ax2d = axes('Position', [0.70 0.52 0.24 0.28]);
     contourf(ax2d, X, Y, Z, 16, 'LineColor', 'none');
     colormap(ax2d, summer);
-    hold(ax2d, 'on'); axis(ax2d, 'equal'); axis(ax2d, [-10 10 -10 10]);
+    hold(ax2d, 'on'); axis(ax2d, 'equal'); axis(ax2d, [x_limits y_limits]);
     title(ax2d, '2D best-route map');
     xlabel(ax2d, 'x'); ylabel(ax2d, 'y');
     plot(ax2d, player3d(1, :), player3d(2, :), 'b-', 'LineWidth', 2);
     plot(ax2d, best3d(1, :), best3d(2, :), 'm--', 'LineWidth', 2.4);
-    plot(ax2d, 0, 0, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
-    plot(ax2d, 10, 10, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
+    plot(ax2d, start_xy(1), start_xy(2), 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
+    plot(ax2d, goal_xy(1), goal_xy(2), 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
 
     axText = axes('Position', [0.70 0.17 0.24 0.25], 'Visible', 'off');
     ratio = player_fuel / max(best_fuel, eps);

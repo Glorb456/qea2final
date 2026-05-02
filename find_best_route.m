@@ -5,7 +5,7 @@ function [best_path, best_fuel, cost_map] = find_best_route(X, Y, Z, PX, PY, sta
 %   terrain gradient.
 
     if nargin < 6 || isempty(start_point)
-        start_point = [0; 0];
+        start_point = [-10; -10];
     end
     if nargin < 7 || isempty(goal_point)
         goal_point = [10; 10];

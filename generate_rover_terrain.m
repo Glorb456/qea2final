@@ -1,5 +1,5 @@
 function [X, Y, Z, PX, PY] = generate_rover_terrain(seed, complexity, amplitude)
-    [X, Y] = meshgrid(-10:0.2:10, -10:0.2:10);
+    [X, Y] = meshgrid(-11:0.2:11, -11:0.2:11);
     rng(seed); 
     phase1 = rand(1) * 2 * pi;
     phase2 = rand(1) * 2 * pi;

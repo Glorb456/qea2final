@@ -14,6 +14,12 @@ function path = create_path_function(X,Y,Z)
     % end
 
     joy = sim3d.io.Joystick(ID=1);
+    start_x = -10;
+    start_y = -10;
+    goal_x = 10;
+    goal_y = 10;
+    x_limits = [min(X(:)), max(X(:))];
+    y_limits = [min(Y(:)), max(Y(:))];
 
     mission_fig = figure('Name', 'Rover Mission: Driving Phase');
     ax3d = axes('Parent', mission_fig, 'Position', [0.05 0.06 0.9 0.9]);
@@ -25,12 +31,12 @@ function path = create_path_function(X,Y,Z)
     camup(ax3d, [0 0 1]);
     camva(ax3d, 75);
     axis(ax3d, 'equal');
-    start_z = interp2(X, Y, Z, -10, -10);
+    start_z = interp2(X, Y, Z, start_x, start_y);
     %hLine = animatedline(ax3d, 'Color', 'b', 'LineWidth', 3);
     %hMarker = plot3(ax3d, 0, 0, start_z, 'r*', 'MarkerSize', 12, 'LineWidth', 2);
 
-    goal_z = interp2(X, Y, Z, 10, 10);
-    plot3(ax3d, 10, 10, goal_z, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red');
+    goal_z = interp2(X, Y, Z, goal_x, goal_y);
+    plot3(ax3d, goal_x, goal_y, goal_z, 'p', 'MarkerSize', 20, 'MarkerFaceColor', 'red');
     % if ~isempty(best_path)
     %     plot3(ax3d, best_path(1, :), best_path(2, :), best_path(3, :) + 0.45, ...
     %         'm--', 'LineWidth', 2);
@@ -38,30 +44,30 @@ function path = create_path_function(X,Y,Z)
 
     map_ax = axes('Parent', mission_fig, 'Position', [0 0.065 0.3 0.3], ...
         'Color', [0.96 0.98 0.94], 'Box', 'on');
-    contourf(map_ax, X, Y, Z, 12, 'LineColor', [0.70 0.78 0.62]);
+    contourf(map_ax, X, Y, Z, 12, 'LineColor', 'none');
     c = colorbar('southoutside');
     c.Label.String = 'Elevation';
     hold(map_ax, 'on');
     axis(map_ax, 'equal');
-    axis(map_ax, [-10 10 -10 10]);
+    axis(map_ax, [x_limits y_limits]);
     set(map_ax, 'XTick', [], 'YTick', [], 'Layer', 'top');
     title(map_ax, '2D Route Map', 'FontSize', 9);
     % if ~isempty(best_path)
     %     plot(map_ax, best_path(1, :), best_path(2, :), 'm--', 'LineWidth', 2);
     % end
-    map_player_line = plot(map_ax, -10, -10, 'b-', 'LineWidth', 2);
-    map_marker = plot(map_ax, -10, -10, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-    plot(map_ax, -10, -10, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
-    plot(map_ax, 10, 10, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
+    map_player_line = plot(map_ax, start_x, start_y, 'b-', 'LineWidth', 2);
+    map_marker = plot(map_ax, start_x, start_y, 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
+    plot(map_ax, start_x, start_y, 'go', 'MarkerFaceColor', 'g', 'MarkerSize', 5);
+    plot(map_ax, goal_x, goal_y, 'rp', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
 
    
     
-    curr_x = 0;
-    curr_y = 0; 
+    curr_x = start_x;
+    curr_y = start_y;
     %addpoints(hLine, curr_x, curr_y, start_z)
     
     
-    path = [0;0;start_z];
+    path = [start_x; start_y; start_z];
     pitch = 0; 
     yaw = 90;
     eye_height = .8; 
@@ -103,8 +109,8 @@ function path = create_path_function(X,Y,Z)
 
             curr_x = curr_x + dx;
             curr_y = curr_y + dy;
-            curr_x = max(min(curr_x, 10), -10);
-            curr_y = max(min(curr_y, 10), -10);
+            curr_x = max(min(curr_x, x_limits(2)), x_limits(1));
+            curr_y = max(min(curr_y, y_limits(2)), y_limits(1));
             curr_z = interp2(X, Y, Z, curr_x, curr_y);
 
 
@@ -137,7 +143,7 @@ function path = create_path_function(X,Y,Z)
             disp('Exiting...');
             break;
         end 
-        if sqrt((curr_x-10).^2 + (curr_y-10).^2) < .5
+        if sqrt((curr_x-goal_x).^2 + (curr_y-goal_y).^2) < .5
             break;
         end 
         pause(0.01); 
